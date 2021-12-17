@@ -1,0 +1,141 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  <meta charset="utf-8">
+  <title>Azure Tutorial</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta property="og:title" content="">
+  <meta property="og:type" content="">
+  <meta property="og:url" content="">
+  <meta property="og:image" content="">
+
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="icon" href="img/azure.png">
+  <meta name="theme-color" content="#fafafa">
+</head>
+
+<body>
+    <h1>Prerequisites</h1>
+
+     Before you start this tutorial, you need to have the following installed: <br>
+     <br>
+     1.   Docker installed on your development machine <br>
+     2.   Docker hub account <br>
+     3.An Azure account<br>
+     4. Git installed on your development machine.<br>
+     5.An IDE or text editor to use for editing files. (I would recommend VSCode)<br>
+
+     <h1>Step 1: Log into Azure: </h1>
+    NOTE: You do not need to have Azure CLI installed on your machine to run a docker images in ACI. Docker takes care of everything. <br>
+    <br>
+    Use the following to login to Azure: <br>
+     $ docker login azure<br>
+     <br>
+
+     This will open a browser and prompt you to login to Azu  re: <br>
+    <br>
+    <img src="img/Azure Sighn In.PNG" width="50%" height="50%"> <br>
+    <br>
+     Select the account that you wish to use and login. Once you have logged in, then you can close the window. In your terminal  window you should see login succeeded <br>    " <br>
+    <br>
+    <img src="img/login.png" width="50%" height="50%">
+
+<h1>Azure ACI Context:</h1>
+One concept that Docker has is called contexts. In Simpler terms, contexts is a place where you can run docker containers. <br>
+<br>
+To Look at what containers are running on your system, you can use the $ docker context list command. It should look kind of like this: <br>
+
+<img src="img/Docker Context.PNG" width="50%" height="50%"><br>
+
+<br>
+let’s now  create an ACI context that we can run containers with. we can use the following command to create an ACI context: $ docker context create aci --help <br>
+<br>
+
+
+<img src="img/create doctor context.PNG" width="50%" height="50%"> <br>
+<br>
+
+you should notice that under the flags section of the help, there is an option to set the location resource-group and subscription id. <br>
+You can pass these flags, if you don't then docker will asj you these questions in interactive mode<br>
+<br>
+
+<h1>Switch Contexts:</h1>
+
+Let’s take a look at our running containers.<br>
+Before we can do that, we should change our active context the ACI context. Use the following command to change the active context:$ docker context use myaci<br>
+Nice, since we told Docker to use the myaci context, we see a list of containers running in our Azure account and not on our local machine.<br>
+<br>
+Let’s make sure our container is running. Copy the IP address of the container from the above ps output and paste it into your browser address bar. You can see our Nginx web server running!<br>
+<br>
+To stop and remove the container, run the following command:$ docker rm web
+
+<h1>Run Containers ON ACI: </h1>
+Now that we have the ACI context setup we can run the containers in the cloud. <br>
+There are two ways that we can tell Docker which context you want your commands to be appkied to. <br>
+The first way is to pass the -context flag and the other is to tell Docker which context we want to use with the rest of the commands by switching contexts. <br>
+<br>
+The command that we use is :$ docker --context myaci run -d --name web -p 80:80 nginx<br>
+<br>
+
+We can see that docker interacted with the ACI to create a container instance called web and then started a single instance. You can navigate to the azure portal and use docker commands that you are familiar with. <br>
+<br>
+
+<h1>Build and Run Locally:</h1>
+Make sure you are in the root directory for the project. We are going to build the images and start the application with Docker Compose.<br>
+<br>
+
+The first step that we need to do is add your Docker ID to the image in our docker-compose.yml file.<br>
+Open the docker-compose.yml file in an editor and replace username with your Docker ID.
+
+Next, we need to make sure we are using the local Docker context. Using the following command to set the docker context to default: $ docker context use default <br>
+<br>
+
+
+Now we can build and start our application using docker-compose. Using the following function to void and start our application using docker: $ docker-compose up --build <br>
+<br>
+
+
+Navigate to http://localhost:5000 and click the Timestamp button a couple of times ti see how the screen updates. <br>
+
+
+<h1>Switching contexts</h1>
+Let’s take a look at our running containers. But before we do that let’s switch our active context to the ACI context we set up above, so we do not have to keep typing –context with every command<br>
+<br>
+We can use the $ docker context use myaci command to change the context.
+
+<h1>Compose on ACI</h1>
+
+Now let’s run our application on ACI using the new docker compose integration.<br>
+<br>
+
+We’ll first need to push our image to Docker Hub so ACI can pull the image and run it. <br>
+<br>
+
+
+
+Run the following command to push your image to your Docker Hub account: $ docker-compose push<br>
+<br>
+
+
+Then lets switch to our ACI context using the following command: $docker context use myaci <br>
+<br>
+
+if you need to see the list of contests that are being used, you use the following command: $ docker context list
+
+Okay, now that we are using the ACI context, let’s start our application in the cloud.You can use the following function to do this: $ docker compose up <br>
+<br>
+
+Now lets verify that the application that we pushed is up and running. to see the IP address, we can list the docker containers that are running. <br>
+To do this, we can use the following command: $ docker ps <br>
+
+<br>
+Copy the IP address and port listed above and paste into your favorite browser, and you should see the website displayed in your favorite browser. <br>
+<br>
+
+</body>
+
+</html>
